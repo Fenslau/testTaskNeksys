@@ -11,7 +11,7 @@ class ProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,31 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        switch ($this->method()) {
+            case 'GET': {
+                    return [
+                        'limit' => 'nullable|numeric|min:1',
+                        'page' => 'nullable|numeric|min:1'
+                    ];
+                }
+
+            case 'POST': {
+                    return [
+                        'title' => 'required|string',
+                        'count' => 'required|numeric|min:1',
+                        'cost' => 'required|numeric|min:1'
+                    ];
+                }
+
+            case 'PUT': {
+                    return [
+                        'title' => 'nullable|string',
+                        'count' => 'nullable|numeric|min:1',
+                        'cost' => 'nullable|numeric|min:1'
+                    ];
+                }
+            default:
+                break;
+        }
     }
 }

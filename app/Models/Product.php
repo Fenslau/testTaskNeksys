@@ -10,6 +10,7 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'title', 'cost', 'count'];
 
     public function user(): BelongsTo
     {
