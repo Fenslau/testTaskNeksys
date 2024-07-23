@@ -18,6 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'title' => $this->faker->word(),
+            'count' => rand(1, 100),
             'cost' => rand(1, 100),
         ];
     }
