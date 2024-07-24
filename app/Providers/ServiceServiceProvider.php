@@ -2,36 +2,26 @@
 
 namespace App\Providers;
 
+use App\Helpers\Result;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ProductController;
 use App\Repositories\ProductRepository;
 use App\Repositories\RepositoryInterface;
 use App\Services\BuyService;
+use App\Services\BuyServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
-class RepositoryServiceProvider extends ServiceProvider
+class ServiceServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
      */
     public function register(): void
     {
-        $this->app->when(ProductController::class)
-            ->needs(RepositoryInterface::class)
-            ->give(function () {
-                return new ProductRepository();
-            });
-
         $this->app->when(BuyController::class)
-            ->needs(RepositoryInterface::class)
+            ->needs(BuyServiceInterface::class)
             ->give(function () {
-                return new ProductRepository();
-            });
-
-        $this->app->when(BuyService::class)
-            ->needs(RepositoryInterface::class)
-            ->give(function () {
-                return new ProductRepository();
+                return new BuyService(new ProductRepository(), new Result());
             });
     }
 
