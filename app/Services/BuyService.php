@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Events\DealSuccess;
 use App\Helpers\Result;
 use App\Models\Product;
-use App\Models\User;
 use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
