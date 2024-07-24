@@ -13,13 +13,9 @@ return new class extends Migration
     {
         Schema::create('deals', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('seller_id');
-            $table->foreign('seller_id')->references('id')->on('users');
-            $table->unsignedBigInteger('buyer_id');
-            $table->foreign('buyer_id')->references('id')->on('users');
-
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('seller');
+            $table->string('buyer');
+            $table->string('product');
             $table->unsignedInteger('cost');
             $table->timestamps();
         });

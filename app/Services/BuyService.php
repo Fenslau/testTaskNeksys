@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\DealSuccess;
 use App\Helpers\Result;
 use App\Models\Product;
 use App\Models\User;
@@ -48,6 +49,7 @@ class BuyService implements BuyServiceInterface
                 ]);
             }
             $buyer->wallet->save();
+            DealSuccess::dispatch($buyer, $product->user, $product, $product->cost);
         });
         return $this->result->success(
             __('Deal!')
