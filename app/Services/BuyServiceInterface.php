@@ -6,5 +6,5 @@ use App\Models\Product;
 
 interface BuyServiceInterface
 {
-    public function buy(Product $product);
+    public function buy(int $product);
 }

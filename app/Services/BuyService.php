@@ -18,20 +18,26 @@ class BuyService implements BuyServiceInterface
     ) {
     }
 
-    public function buy(Product $product)
+    public function buy(int $product)
     {
         $buyer = auth()->user();
-        if ($product->user->id == $buyer->id) return $this->result->error(
-            __('You can not buy your own product')
-        );
-        if ($product->count == 0) return $this->result->error(
-            __('Out of Product')
-        );
-        if ($product->cost > $buyer->wallet->balance) return $this->result->error(
-            __('Not enough money')
-        );
-        DB::transaction(function () use ($product, $buyer) {
+        $errorMessage = null;
+        DB::transaction(function () use ($product, $buyer, &$errorMessage) {
+            $product = Product::lockForUpdate()->findOrFail($product);
+            if ($product->user->id == $buyer->id) {
+                $errorMessage = __('You can not buy your own product');
+                return;
+            }
+            if ($product->count == 0) {
+                $errorMessage = __('Out of Product');
+                return;
+            }
+            if ($product->cost > $buyer->wallet->balance) {
+                $errorMessage = __('Not enough money');
+                return;
+            }
             $buyer->wallet->balance -= $product->cost;
+            $buyer->wallet->save();
             $product->count--;
             $product->save();
             $product->user->wallet->balance += $product->cost;
@@ -48,9 +54,12 @@ class BuyService implements BuyServiceInterface
                     'cost' => $product->cost
                 ]);
             }
-            $buyer->wallet->save();
             DealSuccess::dispatch($buyer, $product->user, $product, $product->cost);
         });
+
+        if ($errorMessage) {
+            return $this->result->error($errorMessage);
+        }
         return $this->result->success(
             __('Deal!')
         );
